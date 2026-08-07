@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CATEGORY_LABEL, type Campaign } from "@/types/campaign";
 
 function dday(deadline: string) {
@@ -11,7 +12,8 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
   const soldOut = campaign.remainingQuantity === 0;
 
   return (
-    <div
+    <Link
+      href={`/campaigns/${campaign.id}`}
       className={`flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 ${
         soldOut ? "opacity-50" : ""
       }`}
@@ -41,6 +43,6 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
           {soldOut ? "소진" : dday(campaign.deadline)}
         </p>
       </div>
-    </div>
+    </Link>
   );
 }

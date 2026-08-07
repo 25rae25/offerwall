@@ -17,3 +17,11 @@ export async function fetchCampaigns(params: CampaignListParams = {}) {
   }
   return res.json() as Promise<{ campaigns: Campaign[]; total: number }>;
 }
+
+export async function fetchCampaign(id: string) {
+  const res = await fetch(`/api/campaigns/${id}`);
+  if (!res.ok) {
+    throw new Error("캠페인을 불러오지 못했습니다.");
+  }
+  return res.json() as Promise<Campaign>;
+}
