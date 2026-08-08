@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import CampaignCard from "@/components/campaign/CampaignCard";
 import CampaignFilter from "@/components/campaign/CampaignFilter";
@@ -20,7 +21,12 @@ function CampaignListPage() {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 py-6">
-      <h1 className="text-xl font-bold">오퍼월</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold">오퍼월</h1>
+        <Link href="/mypage" className="text-sm text-gray-500">
+          마이페이지
+        </Link>
+      </div>
       <p className="mt-1 text-sm text-gray-500">
         미션에 참여하고 포인트를 모아보세요
       </p>
