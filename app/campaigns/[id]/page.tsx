@@ -2,15 +2,18 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCampaign } from "@/lib/queries";
+import { useAuthStore } from "@/store/authStore";
 import { REWARD_DELAY, useUserStore } from "@/store/userStore";
 import { CATEGORY_LABEL } from "@/types/campaign";
 
 export default function CampaignDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const { data: campaign, isLoading, isError } = useCampaign(id);
 
+  const token = useAuthStore((s) => s.token);
   const join = useUserStore((s) => s.join);
   const completeReward = useUserStore((s) => s.completeReward);
   const participation = useUserStore((s) => s.participations[id]);
@@ -116,7 +119,14 @@ export default function CampaignDetailPage() {
       )}
 
       <button
-        onClick={() => join(campaign)}
+        onClick={() => {
+          // 참여는 로그인한 유저만
+          if (!token) {
+            router.push("/login");
+            return;
+          }
+          join(campaign);
+        }}
         disabled={soldOut || !!status}
         className={`mt-6 w-full rounded-xl py-3.5 font-semibold ${
           soldOut

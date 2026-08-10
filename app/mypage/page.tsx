@@ -2,9 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
 import { REWARD_DELAY, useUserStore } from "@/store/userStore";
 
 export default function MyPage() {
+  const router = useRouter();
+  const token = useAuthStore((s) => s.token);
+  const name = useAuthStore((s) => s.name);
+  const logout = useAuthStore((s) => s.logout);
+
   const points = useUserStore((s) => s.points);
   const participations = useUserStore((s) => s.participations);
   const history = useUserStore((s) => s.history);
@@ -15,6 +22,11 @@ export default function MyPage() {
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR 불일치 방지용 마운트 체크
   useEffect(() => setMounted(true), []);
+
+  // 로그인 필수 페이지 — 비로그인이면 로그인 화면으로
+  useEffect(() => {
+    if (mounted && !token) router.replace("/login");
+  }, [mounted, token, router]);
 
   // 대기 중인 건이 있으면 남은 시간만큼 타이머를 걸어준다
   // (상세 페이지를 다시 안 들어와도 적립되도록)
@@ -31,7 +43,7 @@ export default function MyPage() {
     return () => timers.forEach(clearTimeout);
   }, [participations, completeReward]);
 
-  if (!mounted) return null;
+  if (!mounted || !token) return null;
 
   const waiting = Object.values(participations).filter(
     (p) => p.status === "waiting"
@@ -42,7 +54,15 @@ export default function MyPage() {
       <Link href="/" className="text-sm text-gray-400">
         ← 목록으로
       </Link>
-      <h1 className="mt-3 text-xl font-bold">마이페이지</h1>
+      <div className="mt-3 flex items-center justify-between">
+        <h1 className="text-xl font-bold">{name}님</h1>
+        <button
+          onClick={logout} // 토큰이 지워지면 위 가드가 로그인 화면으로 보낸다
+          className="text-sm text-gray-400"
+        >
+          로그아웃
+        </button>
+      </div>
 
       <div className="mt-4 rounded-xl bg-orange-500 p-5 text-white">
         <p className="text-sm text-orange-100">보유 포인트</p>
