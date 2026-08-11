@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   fetchCampaign,
   fetchCampaigns,
@@ -8,9 +8,13 @@ import {
 } from "@/lib/api";
 
 export function useCampaigns(params: CampaignListParams = {}) {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["campaigns", params],
-    queryFn: () => fetchCampaigns(params),
+    queryFn: ({ pageParam }) => fetchCampaigns(params, pageParam),
+    initialPageParam: 1,
+    // 서버가 더 있다고 하면 다음 페이지 번호는 지금까지 받은 페이지 수 + 1
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.hasMore ? allPages.length + 1 : undefined,
   });
 }
 
