@@ -9,14 +9,19 @@ export default function LoginPage() {
   const router = useRouter();
   const login = useAuthStore((s) => s.login);
 
-  const [userId, setUserId] = useState("");
-  const [password, setPassword] = useState("");
+  const [loginValue, setLoginValue] = useState({ userId: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // input의 name 속성으로 어느 필드를 바꿀지 구분 (필드가 늘어도 핸들러는 하나)
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginValue((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setError("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userId.trim() || !password) {
+    if (!loginValue.userId.trim() || !loginValue.password) {
       setError("아이디와 비밀번호를 입력해주세요.");
       return;
     }
@@ -26,7 +31,10 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: userId.trim(), password }),
+        body: JSON.stringify({
+          userId: loginValue.userId.trim(),
+          password: loginValue.password,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -56,22 +64,18 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-3">
           <input
-            value={userId}
-            onChange={(e) => {
-              setUserId(e.target.value);
-              setError("");
-            }}
+            name="userId"
+            value={loginValue.userId}
+            onChange={handleInput}
             placeholder="아이디"
             autoComplete="username"
             className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-orange-400"
           />
           <input
+            name="password"
             type="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setError("");
-            }}
+            value={loginValue.password}
+            onChange={handleInput}
             placeholder="비밀번호"
             autoComplete="current-password"
             className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-orange-400"
