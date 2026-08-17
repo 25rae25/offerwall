@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { signToken } from "@/lib/jwt";
 
-// 데모용 계정. 실서비스라면 DB 조회와 서명된 토큰(JWT) 발급을 서버가 담당한다
+// 데모용 계정. 실서비스라면 DB에서 조회한다
 const DEMO_ID = "demo";
 const DEMO_PASSWORD = "1234";
 
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({
-    token: `token-${Date.now()}`,
+    token: signToken({ sub: DEMO_ID, name: "데모유저" }),
     name: "데모유저",
   });
 }
