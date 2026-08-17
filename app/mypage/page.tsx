@@ -25,8 +25,18 @@ export default function MyPage() {
 
   // 로그인 필수 페이지 — 비로그인이면 로그인 화면으로
   useEffect(() => {
-    if (mounted && !token) router.replace("/login");
-  }, [mounted, token, router]);
+    if (!mounted) return;
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+    // 토큰이 위조되거나 만료됐을 수 있으니 서버에서 검증
+    fetch("/api/auth/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then((res) => {
+      if (!res.ok) logout(); // 토큰이 지워지면 이 effect가 다시 돌아 로그인으로 보냄
+    });
+  }, [mounted, token, router, logout]);
 
   // 대기 중인 건이 있으면 남은 시간만큼 타이머를 걸어준다
   // (상세 페이지를 다시 안 들어와도 적립되도록)
