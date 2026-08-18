@@ -120,9 +120,11 @@ export default function CampaignDetailPage() {
 
       <button
         onClick={() => {
-          // 참여는 로그인한 유저만
+          // 참여는 로그인한 유저만 — 로그인 후 이 캠페인으로 돌아오도록 returnTo를 들려 보낸다
           if (!token) {
-            router.push("/login");
+            router.push(
+              `/login?returnTo=${encodeURIComponent(`/campaigns/${id}`)}`
+            );
             return;
           }
           join(campaign);

@@ -27,7 +27,7 @@ export default function MyPage() {
   useEffect(() => {
     if (!mounted) return;
     if (!token) {
-      router.replace("/login");
+      router.replace("/login?returnTo=/mypage");
       return;
     }
     // 토큰이 위조되거나 만료됐을 수 있으니 서버에서 검증

@@ -1,12 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 
+// returnTo는 내부 경로만 허용 (오픈 리다이렉트 방지)
+// "//evil.com"은 브라우저가 외부 도메인으로 해석하므로 "/" 하나로 시작하는 것만 통과
+function resolveReturnTo(returnTo: string | null) {
+  if (returnTo && returnTo.startsWith("/") && !returnTo.startsWith("//")) {
+    return returnTo;
+  }
+  return "/mypage";
+}
+
+// useSearchParams를 쓰는 컴포넌트는 Suspense로 감싸야 빌드 에러가 안 남
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const login = useAuthStore((s) => s.login);
 
   const [loginValue, setLoginValue] = useState({ userId: "", password: "" });
@@ -42,7 +61,9 @@ export default function LoginPage() {
         return;
       }
       login(data.token, data.name);
-      router.replace("/mypage");
+      // 가드에 막혀서 온 경우 원래 가려던 곳으로 복귀
+      // replace라서 뒤로가기 눌러도 로그인 폼으로 안 돌아온다
+      router.replace(resolveReturnTo(searchParams.get("returnTo")));
     } catch {
       setError("잠시 후 다시 시도해주세요.");
     } finally {
