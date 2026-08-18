@@ -399,3 +399,12 @@ export function getCampaigns(): Campaign[] {
 export function getCampaignById(id: string) {
   return getCampaigns().find((c) => c.id === id);
 }
+
+// 참여 API가 남은 수량을 차감할 때 사용.
+// getCampaigns()는 매번 복사본을 만들므로 원본 seeds를 직접 고쳐야 유지된다
+export function decrementRemaining(id: string) {
+  const seed = seeds.find((c) => c.id === id);
+  if (!seed || seed.remainingQuantity <= 0) return false;
+  seed.remainingQuantity -= 1;
+  return true;
+}

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useCampaign } from "@/lib/queries";
+import { ApiError } from "@/lib/api";
+import { useCampaign, useParticipateCampaign } from "@/lib/queries";
 import { useAuthStore } from "@/store/authStore";
 import { REWARD_DELAY, useUserStore } from "@/store/userStore";
 import { CATEGORY_LABEL } from "@/types/campaign";
@@ -12,8 +13,11 @@ export default function CampaignDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { data: campaign, isLoading, isError } = useCampaign(id);
+  const participate = useParticipateCampaign(id);
+  const [participateError, setParticipateError] = useState("");
 
   const token = useAuthStore((s) => s.token);
+  const logout = useAuthStore((s) => s.logout);
   const join = useUserStore((s) => s.join);
   const completeReward = useUserStore((s) => s.completeReward);
   const participation = useUserStore((s) => s.participations[id]);
@@ -118,6 +122,12 @@ export default function CampaignDetailPage() {
         </div>
       )}
 
+      {participateError && (
+        <p className="mt-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-500">
+          {participateError}
+        </p>
+      )}
+
       <button
         onClick={() => {
           // 참여는 로그인한 유저만 — 로그인 후 이 캠페인으로 돌아오도록 returnTo를 들려 보낸다
@@ -127,9 +137,24 @@ export default function CampaignDetailPage() {
             );
             return;
           }
-          join(campaign);
+          setParticipateError("");
+          participate.mutate(token, {
+            // 서버가 참여를 확정한 뒤에만 적립 대기 흐름을 시작한다
+            onSuccess: () => join(campaign),
+            onError: (err) => {
+              // 토큰 만료/위조면 다시 로그인부터
+              if (err instanceof ApiError && err.status === 401) {
+                logout();
+                router.push(
+                  `/login?returnTo=${encodeURIComponent(`/campaigns/${id}`)}`
+                );
+                return;
+              }
+              setParticipateError(err.message);
+            },
+          });
         }}
-        disabled={soldOut || !!status}
+        disabled={soldOut || !!status || participate.isPending}
         className={`mt-6 w-full rounded-xl py-3.5 font-semibold ${
           soldOut
             ? "bg-gray-200 text-gray-400"
@@ -146,7 +171,9 @@ export default function CampaignDetailPage() {
             ? "적립 완료"
             : status === "waiting"
               ? "적립 대기 중..."
-              : `참여하고 ${campaign.rewardPoint.toLocaleString()}P 받기`}
+              : participate.isPending
+                ? "참여 처리 중..."
+                : `참여하고 ${campaign.rewardPoint.toLocaleString()}P 받기`}
       </button>
     </main>
   );

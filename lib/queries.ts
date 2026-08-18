@@ -1,9 +1,15 @@
 "use client";
 
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   fetchCampaign,
   fetchCampaigns,
+  participateCampaign,
   type CampaignListParams,
 } from "@/lib/api";
 
@@ -23,5 +29,18 @@ export function useCampaign(id: string) {
     queryKey: ["campaign", id],
     queryFn: () => fetchCampaign(id),
     enabled: !!id,
+  });
+}
+
+export function useParticipateCampaign(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (token: string) => participateCampaign(id, token),
+    onSuccess: () => {
+      // 참여로 서버의 남은 수량이 바뀌었으니 캐시를 낡은 것으로 표시 —
+      // 상세/목록을 보는 화면이 알아서 다시 가져간다
+      qc.invalidateQueries({ queryKey: ["campaign", id] });
+      qc.invalidateQueries({ queryKey: ["campaigns"] });
+    },
   });
 }

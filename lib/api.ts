@@ -31,3 +31,25 @@ export async function fetchCampaign(id: string) {
   }
   return res.json() as Promise<Campaign>;
 }
+
+// 호출한 쪽에서 상태코드로 분기할 수 있도록 (401=재로그인, 409=중복/소진 안내)
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public status: number
+  ) {
+    super(message);
+  }
+}
+
+export async function participateCampaign(id: string, token: string) {
+  const res = await fetch(`/api/campaigns/${id}/participate`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new ApiError(data.message ?? "참여에 실패했습니다.", res.status);
+  }
+  return data as { campaignId: string; rewardPoint: number };
+}
