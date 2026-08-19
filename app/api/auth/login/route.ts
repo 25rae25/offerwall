@@ -8,6 +8,7 @@ const DEMO_PASSWORD = "1234";
 export async function POST(request: Request) {
   const { userId, password } = await request.json().catch(() => ({}));
 
+  // 로그인 버튼의 로딩 상태를 확인할 수 있도록 넣은 인위적 지연
   await new Promise((r) => setTimeout(r, 500));
 
   if (userId !== DEMO_ID || password !== DEMO_PASSWORD) {

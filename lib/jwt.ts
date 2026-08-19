@@ -1,7 +1,7 @@
 import crypto from "crypto";
 
-// 데모용 시크릿. 실서비스는 환경변수로 관리
-const SECRET = "offerwall-demo-secret";
+// 환경변수 우선, 없으면 데모용 기본값 (로컬에서 별도 설정 없이 돌아가도록)
+const SECRET = process.env.JWT_SECRET ?? "offerwall-demo-secret";
 const EXPIRES_IN = 60 * 60; // 1시간(초)
 
 interface TokenPayload {
