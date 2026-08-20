@@ -3,16 +3,8 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { resolveReturnTo } from "@/lib/return-to";
 import { useAuthStore } from "@/store/authStore";
-
-// returnTo는 내부 경로만 허용 (오픈 리다이렉트 방지)
-// "//evil.com"은 브라우저가 외부 도메인으로 해석하므로 "/" 하나로 시작하는 것만 통과
-function resolveReturnTo(returnTo: string | null) {
-  if (returnTo && returnTo.startsWith("/") && !returnTo.startsWith("//")) {
-    return returnTo;
-  }
-  return "/mypage";
-}
 
 // useSearchParams를 쓰는 컴포넌트는 Suspense로 감싸야 빌드 에러가 안 남
 export default function LoginPage() {
@@ -113,7 +105,22 @@ function LoginForm() {
           </button>
         </form>
 
-        <p className="mt-4 rounded-xl bg-gray-100 px-4 py-2.5 text-center text-xs text-gray-500">
+        <p className="mt-4 text-center text-sm text-gray-500">
+          계정이 없으신가요?{" "}
+          <Link
+            // 가입 후에도 원래 가려던 곳으로 복귀하도록 returnTo를 그대로 넘긴다
+            href={
+              searchParams.get("returnTo")
+                ? `/signup?returnTo=${encodeURIComponent(searchParams.get("returnTo")!)}`
+                : "/signup"
+            }
+            className="font-medium text-orange-500"
+          >
+            회원가입
+          </Link>
+        </p>
+
+        <p className="mt-3 rounded-xl bg-gray-100 px-4 py-2.5 text-center text-xs text-gray-500">
           데모 계정: demo / 1234
         </p>
       </div>
