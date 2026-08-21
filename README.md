@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 오퍼월 (Offerwall)
 
-## Getting Started
+광고 미션에 참여하고 포인트를 적립하는 오퍼월 서비스입니다.
 
-First, run the development server:
+실제 광고 리워드 도메인에서는 참여 즉시 적립이 아니라, 미션 완료 후 광고주 확인(포스트백)이
+도착해야 적립됩니다. 이 흐름(참여 → 적립 대기 → 적립 완료)을 중심으로 만들었습니다.
+
+- 데모: https://offerwall-portfolio.vercel.app (Vercel 배포)
+- 데모 계정: `demo` / `1234`
+
+## 기술 스택과 선택 이유
+
+| 기술                 | 선택 이유                                                              |
+| -------------------- | ---------------------------------------------------------------------- |
+| Next.js (App Router) | 페이지 라우팅과 목업 API(Route Handler)를 한 프로젝트에서 해결         |
+| TypeScript           | 도메인 타입(캠페인/참여/포인트)을 명시해서 실수를 컴파일 단계에서 차단 |
+| TanStack Query       | 서버 데이터의 캐싱·리패칭·무한스크롤을 직접 구현하지 않기 위해         |
+| Zustand + persist    | 포인트/참여 같은 유저 상태를 가볍게 전역 관리, localStorage 영속       |
+| Tailwind CSS         | 별도 CSS 파일 없이 빠르게 일관된 UI                                    |
+
+## 주요 기능
+
+- **캠페인 목록** — 카테고리 필터, 정렬, 검색(300ms 디바운스), 무한스크롤.
+  필터/검색 상태는 URL 쿼리로 관리해서 새로고침·공유해도 유지
+- **참여 → 적립 흐름** — 서버 API가 참여를 확정하면 적립 대기 상태로 등록되고,
+  광고주 확인을 흉내낸 타이머가 끝나면 적립 완료. 마이페이지에서 포인트·내역 확인
+- **로그인 / 접근 제어** — 직접 구현한 JWT 발급, 보호 페이지는 서버에서 토큰 검증
+
+## 구현 포인트
+
+- **JWT 직접 구현** — 구조 이해를 위해 라이브러리 없이 Node crypto로 서명(HMAC-SHA256)과
+  검증(서명 재계산 비교 + 만료 체크)을 구현. 실서비스라면 검증된 라이브러리를 쓰는 게 맞다
+- **참여 API의 중복 방지** — 참여는 포인트가 걸린 쓰기 동작이라 서버에서 토큰 검증 후,
+  이미 참여했거나 소진된 캠페인이면 409로 거절. 같은 요청이 두 번 와도 두 번 적립되지 않는다
+- **useMutation + 캐시 무효화** — 참여 성공 시 남은 수량이 바뀌므로 상세/목록 쿼리를
+  invalidate해서 화면이 알아서 최신 데이터를 다시 가져가게 처리
+- **returnTo + 오픈 리다이렉트 방어** — 비로그인 참여 시도는 로그인 후 원래 캠페인으로
+  복귀시키되, returnTo 값이 내부 경로(`/`로 시작)일 때만 허용해서 외부 사이트로 튕기는 것을 차단
+- **하이드레이션 처리** — localStorage 영속 상태는 서버 HTML과 어긋날 수 있어
+  마운트 후에만 노출, 적립 대기 건은 새로고침 시 남은 시간을 재계산해 타이머 복구
+
+## 실행 방법
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev   # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 폴더 구조
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+app/
+  api/            # 목업 API (캠페인, 참여, 로그인, 토큰 검증)
+  campaigns/[id]/ # 캠페인 상세 + 참여
+  login/          # 로그인 (returnTo 복귀)
+  mypage/         # 마이페이지 (서버 토큰 검증 가드)
+components/       # 캠페인 카드, 필터
+lib/              # API 래퍼, React Query 훅, JWT, 목업 데이터
+store/            # Zustand 스토어 (유저 포인트, 인증)
+types/            # 도메인 타입
+```
