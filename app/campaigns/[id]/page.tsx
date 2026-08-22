@@ -137,6 +137,13 @@ export default function CampaignDetailPage() {
             );
             return;
           }
+
+          // 미션이 있는 캠페인은 미션 화면에서 적립까지 처리한다
+          if (campaign.mission) {
+            router.push(`/campaigns/${id}/mission`);
+            return;
+          }
+
           setParticipateError("");
           participate.mutate(token, {
             // 서버가 참여를 확정한 뒤에만 적립 대기 흐름을 시작한다
@@ -173,7 +180,9 @@ export default function CampaignDetailPage() {
               ? "적립 대기 중..."
               : participate.isPending
                 ? "참여 처리 중..."
-                : `참여하고 ${campaign.rewardPoint.toLocaleString()}P 받기`}
+                : campaign.mission
+                  ? "미션 시작하기"
+                  : `참여하고 ${campaign.rewardPoint.toLocaleString()}P 받기`}
       </button>
     </main>
   );

@@ -7,6 +7,16 @@ export type CampaignCategory =
 
 export type CampaignSort = "latest" | "reward" | "deadline";
 
+export interface Mission {
+  bg: string;
+  point: string;
+  landingUrl: string;
+  head: string;
+  guide: string;
+  label: string;
+  answer: string;
+}
+
 export interface Campaign {
   id: string;
   title: string;
@@ -20,6 +30,7 @@ export interface Campaign {
   totalQuantity: number;
   remainingQuantity: number;
   deadline: string;
+  mission?: Mission;
 }
 
 export const CATEGORY_LABEL: Record<CampaignCategory, string> = {
