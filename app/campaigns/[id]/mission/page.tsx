@@ -28,6 +28,7 @@ export default function MissionPage() {
   const token = useAuthStore((s) => s.token);
   const logout = useAuthStore((s) => s.logout);
   const join = useUserStore((s) => s.join);
+  const participation = useUserStore((s) => s.participations[id]);
 
   const [step, setStep] = useState<Step>("guide");
   const [answer, setAnswer] = useState("");
@@ -41,6 +42,15 @@ export default function MissionPage() {
   if (!campaign || !mission) {
     return (
       <EmptyState message="미션이 없는 캠페인이에요">
+        <BackLink href={`/campaigns/${id}`} label="캠페인으로" />
+      </EmptyState>
+    );
+  }
+
+  // 주소로 바로 들어와도 이미 참여한 캠페인은 다시 못 하게 막는다
+  if (participation && step !== "done") {
+    return (
+      <EmptyState message="이미 참여한 캠페인이에요">
         <BackLink href={`/campaigns/${id}`} label="캠페인으로" />
       </EmptyState>
     );

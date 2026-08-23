@@ -1,4 +1,4 @@
-// 로딩, 에러, 빈 목록처럼 "내용 대신 한 줄 안내"가 나가는 자리를 맡는다
+// 로딩, 에러, 빈 목록처럼 내용 대신 한 줄 안내가 나가는 자리
 export default function EmptyState({
   message,
   children,

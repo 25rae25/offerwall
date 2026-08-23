@@ -27,6 +27,11 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
           <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500">
             {CATEGORY_LABEL[campaign.category]}
           </span>
+          {campaign.mission && (
+            <span className="rounded bg-orange-50 px-1.5 py-0.5 text-[11px] text-orange-500">
+              미션
+            </span>
+          )}
           <span className="text-xs text-gray-400">{campaign.advertiser}</span>
         </div>
         <p className="mt-1 truncate font-medium">{campaign.title}</p>
