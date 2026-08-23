@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import BackLink from "@/components/common/BackLink";
+import PointHistory from "@/components/mypage/PointHistory";
+import PointSummary from "@/components/mypage/PointSummary";
+import WaitingList from "@/components/mypage/WaitingList";
 import { useAuthStore } from "@/store/authStore";
 import { REWARD_DELAY, useUserStore } from "@/store/userStore";
 
@@ -61,9 +64,7 @@ export default function MyPage() {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 py-6">
-      <Link href="/" className="text-sm text-gray-400">
-        ← 목록으로
-      </Link>
+      <BackLink />
       <div className="mt-3 flex items-center justify-between">
         <h1 className="text-xl font-bold">{name}님</h1>
         <button
@@ -74,66 +75,11 @@ export default function MyPage() {
         </button>
       </div>
 
-      <div className="mt-4 rounded-xl bg-orange-500 p-5 text-white">
-        <p className="text-sm text-orange-100">보유 포인트</p>
-        <p className="mt-1 text-3xl font-bold">{points.toLocaleString()}P</p>
-        <p className="mt-2 text-xs text-orange-100">
-          지금까지 {history.length}건 적립했어요
-        </p>
-      </div>
+      <PointSummary points={points} count={history.length} />
 
-      {waiting.length > 0 && (
-        <section className="mt-6">
-          <h2 className="font-semibold">적립 대기 중</h2>
-          <ul className="mt-2 space-y-2">
-            {waiting.map((p) => (
-              <li
-                key={p.campaignId}
-                className="flex items-center justify-between rounded-xl border border-yellow-200 bg-yellow-50 px-4 py-3"
-              >
-                <span className="text-sm">{p.title}</span>
-                <span className="shrink-0 text-xs font-medium text-yellow-600">
-                  확인 중
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <WaitingList items={waiting} />
 
-      <section className="mt-6">
-        <h2 className="font-semibold">포인트 내역</h2>
-        {history.length === 0 ? (
-          <div className="py-14 text-center">
-            <p className="text-sm text-gray-400">아직 적립 내역이 없어요</p>
-            <Link
-              href="/"
-              className="mt-3 inline-block rounded-lg bg-orange-500 px-4 py-2 text-sm text-white"
-            >
-              캠페인 보러가기
-            </Link>
-          </div>
-        ) : (
-          <ul className="mt-2 divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white">
-            {history.map((h) => (
-              <li
-                key={h.id}
-                className="flex items-center justify-between px-4 py-3"
-              >
-                <div>
-                  <p className="text-sm">{h.title}</p>
-                  <p className="mt-0.5 text-xs text-gray-400">
-                    {new Date(h.createdAt).toLocaleString("ko-KR")}
-                  </p>
-                </div>
-                <span className="text-sm font-bold text-orange-500">
-                  +{h.point.toLocaleString()}P
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <PointHistory items={history} />
     </main>
   );
 }

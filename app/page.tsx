@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import CampaignCard from "@/components/campaign/CampaignCard";
+import EmptyState from "@/components/common/EmptyState";
 import CampaignFilter from "@/components/campaign/CampaignFilter";
 import { useCampaigns } from "@/lib/queries";
 import type { CampaignCategory, CampaignSort } from "@/types/campaign";
@@ -81,28 +82,21 @@ function CampaignListPage() {
       <CampaignFilter />
 
       <div className="mt-4">
-        {isLoading && (
-          <p className="py-16 text-center text-sm text-gray-400">
-            불러오는 중...
-          </p>
-        )}
+        {isLoading && <EmptyState message="불러오는 중..." />}
 
         {isError && (
-          <div className="py-16 text-center">
-            <p className="text-sm text-gray-500">목록을 불러오지 못했어요</p>
+          <EmptyState message="목록을 불러오지 못했어요">
             <button
               onClick={() => refetch()}
-              className="mt-3 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white"
+              className="rounded-lg bg-gray-900 px-4 py-2 text-sm text-white"
             >
               다시 시도
             </button>
-          </div>
+          </EmptyState>
         )}
 
         {data && campaigns.length === 0 && (
-          <p className="py-16 text-center text-sm text-gray-400">
-            조건에 맞는 캠페인이 없어요
-          </p>
+          <EmptyState message="조건에 맞는 캠페인이 없어요" />
         )}
 
         {data && campaigns.length > 0 && (

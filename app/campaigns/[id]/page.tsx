@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import BackLink from "@/components/common/BackLink";
+import EmptyState from "@/components/common/EmptyState";
 import { ApiError } from "@/lib/api";
 import { useCampaign, useParticipateCampaign } from "@/lib/queries";
 import { useAuthStore } from "@/store/authStore";
@@ -33,22 +34,14 @@ export default function CampaignDetailPage() {
   }, [participation, id, completeReward]);
 
   if (isLoading) {
-    return (
-      <p className="py-20 text-center text-sm text-gray-400">불러오는 중...</p>
-    );
+    return <EmptyState message="불러오는 중..." />;
   }
 
   if (isError || !campaign) {
     return (
-      <div className="py-20 text-center">
-        <p className="text-sm text-gray-500">캠페인을 찾을 수 없어요</p>
-        <Link
-          href="/"
-          className="mt-3 inline-block rounded-lg bg-gray-900 px-4 py-2 text-sm text-white"
-        >
-          목록으로
-        </Link>
-      </div>
+      <EmptyState message="캠페인을 찾을 수 없어요">
+        <BackLink />
+      </EmptyState>
     );
   }
 
@@ -57,9 +50,7 @@ export default function CampaignDetailPage() {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 py-6">
-      <Link href="/" className="text-sm text-gray-400">
-        ← 목록으로
-      </Link>
+      <BackLink />
 
       <div className="mt-4 flex items-center gap-4">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-50 text-3xl">

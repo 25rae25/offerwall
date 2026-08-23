@@ -3,6 +3,8 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import BackLink from "@/components/common/BackLink";
+import TextField from "@/components/common/TextField";
 import { resolveReturnTo } from "@/lib/return-to";
 import { useAuthStore } from "@/store/authStore";
 
@@ -65,9 +67,7 @@ function LoginForm() {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 py-6">
-      <Link href="/" className="text-sm text-gray-400">
-        ← 목록으로
-      </Link>
+      <BackLink />
 
       <div className="mx-auto mt-10 max-w-sm">
         <h1 className="text-center text-xl font-bold">로그인</h1>
@@ -76,22 +76,20 @@ function LoginForm() {
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-3">
-          <input
+          <TextField
             name="userId"
             value={loginValue.userId}
             onChange={handleInput}
             placeholder="아이디"
             autoComplete="username"
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-orange-400"
           />
-          <input
+          <TextField
             name="password"
             type="password"
             value={loginValue.password}
             onChange={handleInput}
             placeholder="비밀번호"
             autoComplete="current-password"
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-orange-400"
           />
 
           {error && <p className="text-xs text-red-500">{error}</p>}

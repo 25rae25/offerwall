@@ -3,6 +3,8 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import BackLink from "@/components/common/BackLink";
+import TextField from "@/components/common/TextField";
 import { resolveReturnTo } from "@/lib/return-to";
 import { useAuthStore } from "@/store/authStore";
 
@@ -122,9 +124,7 @@ function SignupForm() {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 py-6">
-      <Link href="/" className="text-sm text-gray-400">
-        ← 목록으로
-      </Link>
+      <BackLink />
 
       <div className="mx-auto mt-8 max-w-sm">
         <h1 className="text-center text-xl font-bold">회원가입</h1>
@@ -133,15 +133,16 @@ function SignupForm() {
         </p>
 
         <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
-          <Field
+          <TextField
             label="아이디"
             name="userId"
             value={form.userId}
             placeholder="아이디를 입력해 주세요 (3자 이상)"
             message={messages.userId}
             onChange={handleInput}
+            autoComplete="username"
           />
-          <Field
+          <TextField
             label="이메일"
             name="email"
             type="email"
@@ -149,8 +150,9 @@ function SignupForm() {
             placeholder="이메일을 입력해 주세요"
             message={messages.email}
             onChange={handleInput}
+            autoComplete="email"
           />
-          <Field
+          <TextField
             label="비밀번호"
             name="password"
             type="password"
@@ -158,8 +160,9 @@ function SignupForm() {
             placeholder="영문, 숫자, 특수문자 조합 8자 이상"
             message={messages.password}
             onChange={handleInput}
+            autoComplete="new-password"
           />
-          <Field
+          <TextField
             label="비밀번호 확인"
             name="passwordConfirm"
             type="password"
@@ -167,6 +170,7 @@ function SignupForm() {
             placeholder="비밀번호를 확인해 주세요"
             message={messages.passwordConfirm}
             onChange={handleInput}
+            autoComplete="new-password"
           />
 
           {formError && <p className="text-xs text-red-500">{formError}</p>}
@@ -188,46 +192,5 @@ function SignupForm() {
         </p>
       </div>
     </main>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = "text",
-  value,
-  placeholder,
-  message,
-  onChange,
-}: {
-  label: string;
-  name: Field;
-  type?: string;
-  value: string;
-  placeholder: string;
-  message: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <div>
-      <label htmlFor={name} className="text-sm font-medium text-gray-600">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        autoComplete={name === "userId" ? "username" : "new-password"}
-        className={`mt-1.5 w-full rounded-xl border px-4 py-3 text-sm outline-none ${
-          message
-            ? "border-red-400 focus:border-red-400"
-            : "border-gray-200 focus:border-orange-400"
-        }`}
-      />
-      {message && <p className="mt-1.5 text-xs text-red-500">{message}</p>}
-    </div>
   );
 }
