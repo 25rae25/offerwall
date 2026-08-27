@@ -48,6 +48,7 @@ export default function MissionAnswer({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={mission.answer}
+          aria-label={mission.label}
           className="mt-2 h-12 w-full rounded-xl border-2 border-gray-300 bg-white text-center"
         />
         {error && <p className="mt-2 text-sm text-red-500">{error}</p>}

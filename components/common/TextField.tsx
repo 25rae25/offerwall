@@ -32,6 +32,8 @@ export default function TextField({
         onChange={onChange}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        // 라벨이 보이지 않는 화면에서는 placeholder가 입력창 이름을 대신한다
+        aria-label={label ? undefined : placeholder}
         className={`w-full rounded-xl border px-4 py-3 text-sm outline-none ${
           label ? "mt-1.5" : ""
         } ${

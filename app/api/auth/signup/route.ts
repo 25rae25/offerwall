@@ -1,30 +1,35 @@
 import { NextResponse } from "next/server";
 import { signToken } from "@/lib/jwt";
 import { createUser, userExists } from "@/lib/users";
+import {
+  EMAIL_REGEX,
+  PASSWORD_REGEX,
+  USER_ID_MIN_LENGTH,
+  VALIDATION_MESSAGE,
+} from "@/lib/validation";
 
-// 프론트에서 이미 검사하지만, API가 직접 호출될 수 있으므로 서버에서도 다시 검사한다
+// 프론트에서 이미 검사하지만, API가 직접 호출될 수 있으므로 서버에서도 같은 규칙으로 다시 검사한다
 export async function POST(request: Request) {
   const { userId, email, password } = await request.json().catch(() => ({}));
 
   const id = String(userId ?? "").trim();
   const mail = String(email ?? "").trim();
 
-  if (id.length < 3) {
+  if (id.length < USER_ID_MIN_LENGTH) {
     return NextResponse.json(
-      { message: "아이디는 3자 이상이어야 합니다." },
+      { message: VALIDATION_MESSAGE.userId },
       { status: 400 }
     );
   }
-  if (!/^\S+@\S+\.\S+$/.test(mail)) {
+  if (!EMAIL_REGEX.test(mail)) {
     return NextResponse.json(
-      { message: "이메일 형식이 올바르지 않습니다." },
+      { message: VALIDATION_MESSAGE.email },
       { status: 400 }
     );
   }
-  // 영문/숫자/특수문자를 모두 포함한 8~16자 (프론트와 동일한 규칙)
-  if (!/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^*+=-]).{8,16}$/.test(String(password ?? ""))) {
+  if (!PASSWORD_REGEX.test(String(password ?? ""))) {
     return NextResponse.json(
-      { message: "영문, 숫자, 특수문자를 조합해 8자 이상 입력해 주세요." },
+      { message: VALIDATION_MESSAGE.password },
       { status: 400 }
     );
   }

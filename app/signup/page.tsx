@@ -6,11 +6,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import BackLink from "@/components/common/BackLink";
 import TextField from "@/components/common/TextField";
 import { resolveReturnTo } from "@/lib/return-to";
+import {
+  EMAIL_REGEX,
+  PASSWORD_REGEX,
+  USER_ID_MIN_LENGTH,
+  VALIDATION_MESSAGE,
+} from "@/lib/validation";
 import { useAuthStore } from "@/store/authStore";
 
-const EMAIL_REGEX = /^[\w.-]+@[\w-]+(\.[\w-]+)+$/;
-// 영문/숫자/특수문자를 모두 포함한 8~16자
-const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^*+=-]).{8,16}$/;
 
 type Field = "userId" | "email" | "password" | "passwordConfirm";
 
@@ -20,17 +23,15 @@ function getMessage(field: Field, value: string, password: string) {
 
   switch (field) {
     case "userId":
-      return value.trim().length < 3 ? "아이디는 3자 이상 입력해 주세요." : "";
+      return value.trim().length < USER_ID_MIN_LENGTH
+        ? VALIDATION_MESSAGE.userId
+        : "";
     case "email":
-      return EMAIL_REGEX.test(value)
-        ? ""
-        : "이메일 형식이 올바르지 않습니다. 다시 확인해 주세요.";
+      return EMAIL_REGEX.test(value) ? "" : VALIDATION_MESSAGE.email;
     case "password":
-      return PASSWORD_REGEX.test(value)
-        ? ""
-        : "영문, 숫자, 특수문자를 조합해 8자 이상 입력해 주세요.";
+      return PASSWORD_REGEX.test(value) ? "" : VALIDATION_MESSAGE.password;
     case "passwordConfirm":
-      return value === password ? "" : "비밀번호가 일치하지 않습니다.";
+      return value === password ? "" : VALIDATION_MESSAGE.passwordConfirm;
   }
 }
 

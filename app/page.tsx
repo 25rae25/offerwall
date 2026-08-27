@@ -76,6 +76,7 @@ function CampaignListPage() {
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
         placeholder="캠페인이나 브랜드 검색"
+        aria-label="캠페인 검색"
         className="mt-5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-orange-400"
       />
 
