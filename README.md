@@ -66,28 +66,28 @@ npm run dev   # http://localhost:3000
 
 ```
 app/
-  api/
-    auth/             # 로그인, 회원가입, 토큰 검증
-    campaigns/        # 캠페인 목록·상세, 참여
-  campaigns/[id]/     # 캠페인 상세 + 참여
-    mission/          # 미션 참여 (가이드 → 인증코드 → 적립)
-  login/              # 로그인 (returnTo 복귀)
-  signup/             # 회원가입
-  mypage/             # 마이페이지 (서버 토큰 검증 가드)
-  providers.tsx       # React Query Provider
+├── api/                    # API 라우트
+│   ├── auth/               # 로그인, 회원가입, 토큰 검증
+│   └── campaigns/          # 캠페인 목록·상세, 참여
+├── campaigns/[id]/         # 캠페인 상세 + 참여
+│   └── mission/            # 미션 참여 (가이드 → 인증코드 → 적립)
+├── login/                  # 로그인 (returnTo 복귀)
+├── signup/                 # 회원가입
+├── mypage/                 # 마이페이지 (서버 토큰 검증 가드)
+└── providers.tsx           # React Query Provider
 components/
-  campaign/           # 캠페인 카드, 필터
-  common/             # 뒤로가기, 빈 상태 안내, 입력 필드
-  mission/            # 미션 화면 단위 (가이드, 입력, 완료)
-  mypage/             # 포인트 요약, 대기 목록, 내역
+├── campaign/               # 캠페인 카드, 필터
+├── common/                 # 뒤로가기, 빈 상태 안내, 입력 필드
+├── mission/                # 미션 화면 단위 (가이드, 입력, 완료)
+└── mypage/                 # 포인트 요약, 대기 목록, 내역
 lib/
-  api.ts              # fetch 래퍼
-  queries.ts          # React Query 훅
-  jwt.ts              # JWT 서명·검증
-  users.ts            # 목업 유저 저장소
-  participations.ts   # 참여 이력 저장소
-  return-to.ts        # returnTo 경로 검증
-  mock-data.ts        # 캠페인 목업 데이터
-store/                # Zustand (인증, 유저 포인트)
-types/                # 도메인 타입
+├── api.ts                  # fetch 래퍼
+├── queries.ts              # React Query 훅
+├── jwt.ts                  # JWT 서명·검증
+├── users.ts                # 목업 유저 저장소
+├── participations.ts       # 참여 이력 저장소
+├── return-to.ts            # returnTo 경로 검증
+└── mock-data.ts            # 캠페인 목업 데이터
+store/                      # Zustand (인증, 유저 포인트)
+types/                      # 도메인 타입
 ```
