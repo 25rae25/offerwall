@@ -29,6 +29,7 @@
   → 적립의 3단계로 진행된다. 캠페인마다 배경색과 미션 내용이 다르다
 - **회원가입 / 로그인 / 접근 제어**: 직접 구현한 JWT 발급, 보호 페이지는 서버에서 토큰 검증
 
+<!--
 ## 구현
 
 **참여 중복 방지.** 참여는 포인트가 걸린 쓰기 동작이다. 서버에서 토큰을 검증한 뒤
@@ -52,6 +53,7 @@
 
 **하이드레이션 처리.** localStorage 영속 상태는 서버가 그린 HTML과 어긋날 수 있어서 마운트
 후에만 노출한다. 적립 대기 건은 새로고침하면 남은 시간을 다시 계산해 타이머를 복구한다.
+-->
 
 ## 실행 방법
 
@@ -64,28 +66,28 @@ npm run dev   # http://localhost:3000
 
 ```
 app/
-  api/
-    auth/             # 로그인, 회원가입, 토큰 검증
-    campaigns/        # 캠페인 목록·상세, 참여
-  campaigns/[id]/     # 캠페인 상세 + 참여
-    mission/          # 미션 참여 (가이드 → 인증코드 → 적립)
-  login/              # 로그인 (returnTo 복귀)
-  signup/             # 회원가입
-  mypage/             # 마이페이지 (서버 토큰 검증 가드)
-  providers.tsx       # React Query Provider
+├── api/                    # API 라우트
+│   ├── auth/               # 로그인, 회원가입, 토큰 검증
+│   └── campaigns/          # 캠페인 목록·상세, 참여
+├── campaigns/[id]/         # 캠페인 상세 + 참여
+│   └── mission/            # 미션 참여 (가이드 → 인증코드 → 적립)
+├── login/                  # 로그인 (returnTo 복귀)
+├── signup/                 # 회원가입
+├── mypage/                 # 마이페이지 (서버 토큰 검증 가드)
+└── providers.tsx           # React Query Provider
 components/
-  campaign/           # 캠페인 카드, 필터
-  common/             # 뒤로가기, 빈 상태 안내, 입력 필드
-  mission/            # 미션 화면 단위 (가이드, 입력, 완료)
-  mypage/             # 포인트 요약, 대기 목록, 내역
+├── campaign/               # 캠페인 카드, 필터
+├── common/                 # 뒤로가기, 빈 상태 안내, 입력 필드
+├── mission/                # 미션 화면 단위 (가이드, 입력, 완료)
+└── mypage/                 # 포인트 요약, 대기 목록, 내역
 lib/
-  api.ts              # fetch 래퍼
-  queries.ts          # React Query 훅
-  jwt.ts              # JWT 서명·검증
-  users.ts            # 목업 유저 저장소
-  participations.ts   # 참여 이력 저장소
-  return-to.ts        # returnTo 경로 검증
-  mock-data.ts        # 캠페인 목업 데이터
-store/                # Zustand (인증, 유저 포인트)
-types/                # 도메인 타입
+├── api.ts                  # fetch 래퍼
+├── queries.ts              # React Query 훅
+├── jwt.ts                  # JWT 서명·검증
+├── users.ts                # 목업 유저 저장소
+├── participations.ts       # 참여 이력 저장소
+├── return-to.ts            # returnTo 경로 검증
+└── mock-data.ts            # 캠페인 목업 데이터
+store/                      # Zustand (인증, 유저 포인트)
+types/                      # 도메인 타입
 ```
