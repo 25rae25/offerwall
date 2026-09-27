@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import CampaignCard from "@/components/campaign/CampaignCard";
+import CampaignCardSkeleton from "@/components/campaign/CampaignCardSkeleton";
 import EmptyState from "@/components/common/EmptyState";
 import CampaignFilter from "@/components/campaign/CampaignFilter";
 import { useCampaigns } from "@/lib/queries";
@@ -20,7 +21,12 @@ function CampaignListPage() {
   const [keyword, setKeyword] = useState(q);
 
   // 타이핑이 멈추고 300ms 뒤에 URL에 반영 (입력마다 요청하지 않도록)
+  // 이미 URL에 있는 값과 같으면 replace하지 않는다.
+  // replace가 일어나면 searchParams가 새로 만들어져 이 effect가 다시 도는데,
+  // 그때 또 replace하면 화면이 가만히 있어도 계속 돌게 된다
   useEffect(() => {
+    if (keyword.trim() === q) return;
+
     const timer = setTimeout(() => {
       const params = new URLSearchParams(searchParams);
       if (keyword.trim()) {
@@ -32,7 +38,7 @@ function CampaignListPage() {
       router.replace(query ? `/?${query}` : "/", { scroll: false });
     }, 300);
     return () => clearTimeout(timer);
-  }, [keyword, searchParams, router]);
+  }, [keyword, q, searchParams, router]);
 
   const {
     data,
@@ -83,7 +89,15 @@ function CampaignListPage() {
       <CampaignFilter />
 
       <div className="mt-4">
-        {isLoading && <EmptyState message="불러오는 중..." />}
+        {isLoading && (
+          <ul className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <li key={i}>
+                <CampaignCardSkeleton />
+              </li>
+            ))}
+          </ul>
+        )}
 
         {isError && (
           <EmptyState message="목록을 불러오지 못했어요">
