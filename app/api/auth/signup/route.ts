@@ -45,7 +45,6 @@ export async function POST(request: Request) {
 
   const user = createUser(id, mail, String(password));
 
-  // 가입 직후 다시 로그인시키지 않도록 토큰을 바로 발급한다
   const token = signToken({ sub: user.userId, name: user.name });
   return NextResponse.json({ token, name: user.name }, { status: 201 });
 }

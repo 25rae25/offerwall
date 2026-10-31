@@ -18,7 +18,6 @@ export default function CampaignFilter() {
   const category = searchParams.get("category");
   const sort = searchParams.get("sort") ?? "latest";
 
-  // 필터 상태는 URL 쿼리로 관리 -> 새로고침해도 유지됨
   const setParam = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams);
     if (value) {

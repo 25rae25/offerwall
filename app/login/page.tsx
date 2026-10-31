@@ -8,7 +8,6 @@ import TextField from "@/components/common/TextField";
 import { resolveReturnTo } from "@/lib/return-to";
 import { useAuthStore } from "@/store/authStore";
 
-// useSearchParams를 쓰는 컴포넌트는 Suspense로 감싸야 빌드 에러가 안 남
 export default function LoginPage() {
   return (
     <Suspense>
@@ -26,7 +25,6 @@ function LoginForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // input의 name 속성으로 어느 필드를 바꿀지 구분 (필드가 늘어도 핸들러는 하나)
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginValue((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError("");
@@ -55,8 +53,6 @@ function LoginForm() {
         return;
       }
       login(data.token, data.name);
-      // 가드에 막혀서 온 경우 원래 가려던 곳으로 복귀
-      // replace라서 뒤로가기 눌러도 로그인 폼으로 안 돌아온다
       router.replace(resolveReturnTo(searchParams.get("returnTo")));
     } catch {
       setError("잠시 후 다시 시도해주세요.");
@@ -106,7 +102,6 @@ function LoginForm() {
         <p className="mt-4 text-center text-sm text-gray-500">
           계정이 없으신가요?{" "}
           <Link
-            // 가입 후에도 원래 가려던 곳으로 복귀하도록 returnTo를 그대로 넘긴다
             href={
               searchParams.get("returnTo")
                 ? `/signup?returnTo=${encodeURIComponent(searchParams.get("returnTo")!)}`

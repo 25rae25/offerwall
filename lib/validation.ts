@@ -3,7 +3,6 @@ export const USER_ID_MIN_LENGTH = 3;
 
 export const EMAIL_REGEX = /^[\w.-]+@[\w-]+(\.[\w-]+)+$/;
 
-// 영문/숫자/특수문자를 모두 포함한 8~16자
 export const PASSWORD_REGEX =
   /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^*+=-]).{8,16}$/;
 

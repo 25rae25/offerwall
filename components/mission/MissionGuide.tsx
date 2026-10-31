@@ -12,7 +12,6 @@ export default function MissionGuide({
   mission: Mission;
   onNext: () => void;
 }) {
-  // 참여 방법을 한 줄씩 올리려고 마운트된 뒤에 켠다
   const [shown, setShown] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- 등장 애니메이션 시작용
   useEffect(() => setShown(true), []);

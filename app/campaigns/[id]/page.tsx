@@ -23,8 +23,7 @@ export default function CampaignDetailPage() {
   const completeReward = useUserStore((s) => s.completeReward);
   const participation = useUserStore((s) => s.participations[id]);
 
-  // 새로고침하면 join에서 걸어둔 타이머가 사라지므로
-  // 대기 중인 건은 남은 시간만큼 다시 타이머를 걸어준다
+  // 새로고침으로 사라진 적립 타이머를 남은 시간만큼 복구한다.
   useEffect(() => {
     if (participation?.status !== "waiting") return;
     const elapsed = Date.now() - new Date(participation.joinedAt).getTime();
@@ -121,7 +120,6 @@ export default function CampaignDetailPage() {
 
       <button
         onClick={() => {
-          // 참여는 로그인한 유저만 — 로그인 후 이 캠페인으로 돌아오도록 returnTo를 들려 보낸다
           if (!token) {
             router.push(
               `/login?returnTo=${encodeURIComponent(`/campaigns/${id}`)}`
@@ -129,7 +127,6 @@ export default function CampaignDetailPage() {
             return;
           }
 
-          // 미션이 있는 캠페인은 미션 화면에서 적립까지 처리한다
           if (campaign.mission) {
             router.push(`/campaigns/${id}/mission`);
             return;
@@ -137,10 +134,8 @@ export default function CampaignDetailPage() {
 
           setParticipateError("");
           participate.mutate(token, {
-            // 서버가 참여를 확정한 뒤에만 적립 대기 흐름을 시작한다
             onSuccess: () => join(campaign),
             onError: (err) => {
-              // 토큰 만료/위조면 다시 로그인부터
               if (err instanceof ApiError && err.status === 401) {
                 logout();
                 router.push(

@@ -32,7 +32,6 @@ export async function fetchCampaign(id: string) {
   return res.json() as Promise<Campaign>;
 }
 
-// 호출한 쪽에서 상태코드로 분기할 수 있도록 (401=재로그인, 409=중복/소진 안내)
 export class ApiError extends Error {
   constructor(
     message: string,

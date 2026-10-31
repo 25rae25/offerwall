@@ -26,14 +26,12 @@ export default function MyPage() {
   // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR 불일치 방지용 마운트 체크
   useEffect(() => setMounted(true), []);
 
-  // 로그인 필수 페이지 — 비로그인이면 로그인 화면으로
   useEffect(() => {
     if (!mounted) return;
     if (!token) {
       router.replace("/login?returnTo=/mypage");
       return;
     }
-    // 토큰이 위조되거나 만료됐을 수 있으니 서버에서 검증
     fetch("/api/auth/me", {
       headers: { Authorization: `Bearer ${token}` },
     }).then((res) => {

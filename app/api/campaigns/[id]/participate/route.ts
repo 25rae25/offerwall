@@ -7,7 +7,6 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // 참여는 포인트가 걸린 쓰기 동작이라 반드시 토큰 검증부터
   const auth = request.headers.get("authorization");
   if (!auth?.startsWith("Bearer ")) {
     return NextResponse.json(
@@ -32,7 +31,6 @@ export async function POST(
     );
   }
 
-  // 중복 참여 방지 — 같은 요청이 두 번 와도 두 번 적립되지 않는다
   if (hasParticipated(payload.sub, id)) {
     return NextResponse.json(
       { message: "이미 참여한 캠페인입니다." },

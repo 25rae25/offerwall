@@ -52,7 +52,6 @@ function CampaignListPage() {
 
   const campaigns = data ? data.pages.flatMap((p) => p.campaigns) : [];
 
-  // 목록 맨 아래 div가 화면에 보이면 다음 페이지 요청
   const bottomRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = bottomRef.current;
@@ -142,7 +141,6 @@ function CampaignListPage() {
 }
 
 export default function Home() {
-  // useSearchParams를 쓰는 컴포넌트는 Suspense로 감싸야 빌드 에러가 안 남
   return (
     <Suspense>
       <CampaignListPage />

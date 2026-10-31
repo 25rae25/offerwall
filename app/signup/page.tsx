@@ -17,9 +17,8 @@ import { useAuthStore } from "@/store/authStore";
 
 type Field = "userId" | "email" | "password" | "passwordConfirm";
 
-// 입력값 하나를 받아 에러 메시지를 돌려준다 (통과하면 빈 문자열)
 function getMessage(field: Field, value: string, password: string) {
-  if (!value) return ""; // 아직 입력 전이면 잔소리하지 않는다
+  if (!value) return "";
 
   switch (field) {
     case "userId":
@@ -35,7 +34,6 @@ function getMessage(field: Field, value: string, password: string) {
   }
 }
 
-// useSearchParams를 쓰는 컴포넌트는 Suspense로 감싸야 빌드 에러가 안 남
 export default function SignupPage() {
   return (
     <Suspense>
@@ -59,7 +57,6 @@ function SignupForm() {
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // input의 name 속성으로 어느 필드를 바꿀지 구분 (필드가 늘어도 핸들러는 하나)
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -67,7 +64,6 @@ function SignupForm() {
     setFormError("");
   };
 
-  // 입력할 때마다 계산하는 실시간 메시지 — 상태로 들고 있지 않아도 된다
   const messages: Record<Field, string> = {
     userId:
       duplicateId && form.userId.trim() === duplicateId
@@ -82,7 +78,6 @@ function SignupForm() {
     ),
   };
 
-  // 네 필드가 모두 채워지고 에러가 하나도 없어야 가입 버튼이 열린다
   const canSubmit =
     Object.values(form).every((v) => v.trim()) &&
     Object.values(messages).every((m) => !m);
@@ -105,7 +100,6 @@ function SignupForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        // 아이디 중복(409)은 해당 필드 아래에, 나머지는 폼 전체 에러로
         if (res.status === 409) {
           setDuplicateId(form.userId.trim());
         } else {
@@ -113,7 +107,6 @@ function SignupForm() {
         }
         return;
       }
-      // 가입 즉시 로그인 — 로그인 화면을 한 번 더 거치지 않는다
       login(data.token, data.name);
       router.replace(resolveReturnTo(searchParams.get("returnTo")));
     } catch {

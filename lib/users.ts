@@ -23,7 +23,6 @@ export function userExists(userId: string) {
 }
 
 export function createUser(userId: string, email: string, password: string) {
-  // 별도 닉네임 없이 아이디를 표시 이름으로 쓴다
   const user = { userId, email, password, name: userId };
   users.set(userId, user);
   return user;

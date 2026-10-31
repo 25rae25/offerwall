@@ -14,7 +14,6 @@ import { useUserStore } from "@/store/userStore";
 
 type Step = "guide" | "answer" | "done";
 
-// 공백이나 대소문자까지 맞추라고 하면 불편하니까 지우고 비교한다
 function normalize(value: string) {
   return value.replace(/\s/g, "").toUpperCase();
 }
@@ -47,7 +46,6 @@ export default function MissionPage() {
     );
   }
 
-  // 주소로 바로 들어와도 이미 참여한 캠페인은 다시 못 하게 막는다
   if (participation && step !== "done") {
     return (
       <EmptyState message="이미 참여한 캠페인이에요">
@@ -88,7 +86,6 @@ export default function MissionPage() {
   };
 
   return (
-    // 배경색은 화면 전체, 내용은 모바일 폭으로 가운데 정렬
     <div
       className="min-h-screen w-full text-center text-white"
       style={{ backgroundColor: mission.bg }}
